@@ -6,11 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use hasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +22,15 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'refer_code',
+        'dealer',
         'password',
+        'role',
+        'is_active',
+        'refer_by',
+        'position',
+        'shopping_wallet',
+        'income_wallet',
     ];
 
     /**
@@ -32,6 +42,23 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($user) {
+            $user->refer_code = self::generateReferCode();
+        });
+    }
+
+    public static function generateReferCode(): string
+    {
+        do {
+            $code = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6));
+        } while (self::where('refer_code', $code)->exists());
+
+        return $code;
+    }
 
     /**
      * Get the attributes that should be cast.

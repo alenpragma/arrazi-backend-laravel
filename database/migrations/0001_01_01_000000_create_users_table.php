@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -13,8 +15,18 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('email')->unique();
+            $table->string('phone',15)->nullable();
+            $table->string('address')->nullable();
+            $table->string('bio')->nullable();
+            $table->float('shopping_wallet')->default(0);
+            $table->float('income_wallet')->default(0);
+            $table->string('refer_code')->unique();
+            $table->enum('position',['left','right'])->default('right');
+            $table->integer('refer_by');
+            $table->boolean('is_active')->default(false);
+            $table->enum('role', ['admin', 'user','dealer'])->default('user');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
@@ -35,6 +47,17 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        DB::table('users')->insert([
+            'name' => 'admin',
+            'email' => 'admin@admin.com',
+            'password' => Hash::make('112233'),
+            'refer_code' => '123456',
+            'is_active' => true,
+            'role' => 'admin',
+            'refer_by' => 1,
+            'position' => 'left',
+        ]);
     }
 
     /**

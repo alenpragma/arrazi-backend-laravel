@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('deposits', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('payment_method');
+            $table->foreignId('payment_method')->constrained('payment_method');
             $table->string('amount');
             $table->string('currency');
             $table->string('type');
             $table->string('number');
             $table->enum('status',['pending','approved','rejected'])->default('pending');
+            $table->string('transaction_id')->unique();
             $table->timestamps();
         });
     }

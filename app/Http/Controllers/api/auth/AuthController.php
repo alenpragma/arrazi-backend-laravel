@@ -33,6 +33,8 @@ class AuthController extends Controller
         return response()->json([
             'status' => true,
             'user' => $user,
+            'left_pv' => $user->getTotalLeftPoints(),
+           'right_pv' => $user->getTotalRightPoints(),
         ]);
     }
 }

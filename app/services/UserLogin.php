@@ -28,7 +28,7 @@ class UserLogin
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid password'
-            ], 401);
+            ], 404);
         }
 
         $token = $user->createToken('my-app-token')->plainTextToken;
@@ -38,6 +38,6 @@ class UserLogin
             'message' => 'Login success',
             'token' => $token,
             'user' => $user, // optional: user info if needed
-        ], 200);
+        ]);
     }
 }

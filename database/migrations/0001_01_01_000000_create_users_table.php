@@ -20,10 +20,14 @@ return new class extends Migration
             $table->string('phone',15)->nullable();
             $table->string('address')->nullable();
             $table->string('bio')->nullable();
+            $table->unsignedBigInteger('upline_id')->nullable();
             $table->float('shopping_wallet')->default(0);
             $table->float('income_wallet')->default(0);
+            $table->float('points')->default(0);
             $table->string('refer_code')->unique();
             $table->enum('position',['left','right'])->default('right');
+            $table->unsignedBigInteger('left_user_id')->nullable();
+            $table->unsignedBigInteger('right_user_id')->nullable();
             $table->integer('refer_by');
             $table->boolean('is_active')->default(false);
             $table->enum('role', ['admin', 'user','dealer'])->default('user');
@@ -56,6 +60,7 @@ return new class extends Migration
             'is_active' => true,
             'role' => 'admin',
             'refer_by' => 1,
+            'upline_id' => 1,
             'position' => 'left',
         ]);
     }

@@ -2,23 +2,18 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @method static create(array $array)
+ */
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
-    use hasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -30,14 +25,13 @@ class User extends Authenticatable
         'refer_by',
         'position',
         'shopping_wallet',
+        'points',
         'income_wallet',
+        'upline_id',
+        'left_user_id',
+        'right_user_id'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -60,16 +54,57 @@ class User extends Authenticatable
         return $code;
     }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function left()
+    {
+        return $this->belongsTo(User::class, 'left_user_id');
+    }
+
+    public function right()
+    {
+        return $this->belongsTo(User::class, 'right_user_id');
+    }
+
+    public function upline()
+    {
+        return $this->belongsTo(User::class, 'upline_id');
+    }
+
+    public function referer()
+    {
+        return $this->belongsTo(User::class, 'refer_by');
+    }
+
+    // ✅ Optimized recursive points calculation without loading full user tree
+
+    public function getTotalLeftPoints(): int
+    {
+        return $this->sumPointsById($this->left_user_id);
+    }
+
+    public function getTotalRightPoints(): int
+    {
+        return $this->sumPointsById($this->right_user_id);
+    }
+
+    protected function sumPointsById($userId): int
+    {
+        if (!$userId) return 0;
+
+        $user = self::select('id', 'points', 'left_user_id', 'right_user_id')
+            ->find($userId);
+
+        if (!$user) return 0;
+
+        return $user->points
+            + $this->sumPointsById($user->left_user_id)
+            + $this->sumPointsById($user->right_user_id);
     }
 }

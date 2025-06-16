@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\api\auth\AuthController;
+use App\Http\Controllers\api\BalanceTransferController;
+use App\Http\Controllers\api\CronController;
 use App\Http\Controllers\api\DepositController;
+use App\Http\Controllers\api\NetworkController;
 use App\Http\Controllers\api\PaymentMethodController;
 use App\Http\Controllers\api\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -28,4 +31,15 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('deposit-history', [DepositController::class, 'depositHistory']);
     Route::get('order-history', [ProductController::class, 'orderHistory']);
 
+
+    //network
+    Route::get('network', [NetworkController::class, 'index']);
+
+
+    Route::post('transfer-balance', [BalanceTransferController::class, 'transfer']);
+    Route::get('transfer-history', [BalanceTransferController::class, 'history']);
+
 });
+
+//cron
+Route::get('cron', [CronController::class, 'cron']);

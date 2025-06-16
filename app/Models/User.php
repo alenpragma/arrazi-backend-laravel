@@ -26,6 +26,8 @@ class User extends Authenticatable
         'position',
         'shopping_wallet',
         'points',
+        'left_points',
+        'right_points',
         'income_wallet',
         'upline_id',
         'left_user_id',
@@ -82,8 +84,7 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'refer_by');
     }
 
-    // ✅ Optimized recursive points calculation without loading full user tree
-
+    // ✅ Recursive left/right points calculation
     public function getTotalLeftPoints(): int
     {
         return $this->sumPointsById($this->left_user_id);
@@ -106,5 +107,52 @@ class User extends Authenticatable
         return $user->points
             + $this->sumPointsById($user->left_user_id)
             + $this->sumPointsById($user->right_user_id);
+    }
+
+    public function loadNetwork(): array
+    {
+        return $this->buildTree($this);
+    }
+
+    protected function buildTree($user): ?array
+    {
+        if (!$user) {
+            return null;
+        }
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'points' => $user->points,
+            'left' => $this->buildTree($user->left),
+            'right' => $this->buildTree($user->right),
+        ];
+    }
+
+    // ✅ Only first 20 downline users (flattened list)
+    public function getDownlineUsersLimited(int $limit = 20): array
+    {
+        $downlines = [];
+        $this->collectDownline($this, $downlines);
+
+        return array_slice($downlines, 0, $limit);
+    }
+
+    protected function collectDownline($user, array &$result): void
+    {
+        foreach (['left', 'right'] as $side) {
+            $child = $user->$side;
+            if ($child) {
+                $result[] = [
+                    'id' => $child->id,
+                    'name' => $child->name,
+                    'email' => $child->email,
+                    'points' => $child->points,
+                    'position' => $child->position,
+                ];
+                $this->collectDownline($child, $result);
+            }
+        }
     }
 }

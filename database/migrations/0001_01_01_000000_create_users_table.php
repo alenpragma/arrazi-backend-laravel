@@ -24,6 +24,8 @@ return new class extends Migration
             $table->float('shopping_wallet')->default(0);
             $table->float('income_wallet')->default(0);
             $table->float('points')->default(0);
+            $table->float('left_points')->default(0);
+            $table->float('right_points')->default(0);
             $table->string('refer_code')->unique();
             $table->enum('position',['left','right'])->default('right');
             $table->unsignedBigInteger('left_user_id')->nullable();

@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deposits', function (Blueprint $table) {
+        Schema::create('transfer_history', function (Blueprint $table) {
             $table->id();
+            $table->integer('amount');
             $table->integer('user_id');
-            $table->string('payment_method',30);
-            $table->string('amount');
-            $table->string('currency');
-            $table->string('type');
-            $table->string('number');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->string('transaction_id')->unique();
+            $table->string('from');
+            $table->string('to');
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deposits');
+        Schema::dropIfExists('transfer_history');
     }
 };

@@ -89,6 +89,10 @@ class ProductController extends Controller
             // Update user wallet and points
             $user->shopping_wallet -= $totalCost;
             $user->points += $totalPoints;
+            if($user->is_active == 0){
+                $user->is_active = 1;
+                $user->shopping_wallet += $totalPoints*3;
+            }
             $user->save();
 
             $this->distributeLeftChainPoints($user, $totalPoints);
@@ -164,7 +168,7 @@ class ProductController extends Controller
 
         if ($referrer) {
             $bonus = ($totalPoints * 5);
-            $referrer->shopping_wallet = ($referrer->shopping_wallet ?? 0) + $bonus;
+            $referrer->income_wallet = ($referrer->income_wallet ?? 0) + $bonus;
             $referrer->save();
         }
     }

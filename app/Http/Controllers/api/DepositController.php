@@ -31,7 +31,7 @@ class DepositController extends Controller
 
             $user = $request->user();
 
-        $deposit =    Deposit::create([
+        $deposit =   Deposit::create([
                 'user_id' => $user->id,
                 'payment_method' => $payment->method_name,
                 'transaction_id' => $request->input('transaction_id'),

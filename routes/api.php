@@ -7,6 +7,8 @@ use App\Http\Controllers\api\DepositController;
 use App\Http\Controllers\api\NetworkController;
 use App\Http\Controllers\api\PaymentMethodController;
 use App\Http\Controllers\api\ProductController;
+use App\Http\Controllers\api\StockController;
+use App\Http\Controllers\api\WithdrawController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -38,6 +40,15 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 
     Route::post('transfer-balance', [BalanceTransferController::class, 'transfer']);
     Route::get('transfer-history', [BalanceTransferController::class, 'history']);
+
+
+    //Stock
+    Route::get('buy-stock', [StockController::class,'buyStocks']);
+    Route::get('buy-stock/history', [StockController::class,'index']);
+
+    //withdraw
+    Route::post('withdraw-request', [WithdrawController::class, 'withdrawRequest']);
+    Route::post('withdraw-history', [WithdrawController::class, 'index']);
 
 });
 

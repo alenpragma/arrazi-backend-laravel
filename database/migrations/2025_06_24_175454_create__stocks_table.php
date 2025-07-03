@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\TransferHistory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transfer_history', function (Blueprint $table) {
+        Schema::create('stocks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users');
             $table->integer('amount');
-            $table->integer('user_id');
-            $table->string('from');
-            $table->string('to');
-            $table->enum('type', ['in', 'out']);
+            $table->integer('totalNewMember')->nullable();
+            $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transfer_history');
+        Schema::dropIfExists('stocks');
     }
 };

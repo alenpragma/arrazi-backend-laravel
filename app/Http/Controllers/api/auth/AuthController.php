@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\api\auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\services\UserLogin;
 use App\services\UserRegister;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -35,6 +37,9 @@ class AuthController extends Controller
             'user' => $user,
             'left_pv' => $user->getTotalLeftPoints() - $user->left_points,
             'right_pv' => $user->getTotalRightPoints() - $user->right_points,
+            'binary_earnings' => DB::table('matching_bonus_logs')->where('user_id', $user->id)->sum('amount'),
+            'total_match' => DB::table('matching_bonus_logs')->where('user_id', $user->id)->count(),
+            'direct_refer' => User::where('refer_by', $user->id)->count(),
         ]);
     }
 }

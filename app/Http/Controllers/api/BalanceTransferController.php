@@ -42,15 +42,24 @@ class BalanceTransferController extends Controller
             $sender->shopping_wallet -= $amount;
             $sender->save();
 
-            // Credit to receiver
-            $receiver->shopping_wallet += $amount;
-            $receiver->save();
-
             TransferHistory::create([
                 'user_id' => $sender->id,
                 'amount' => $amount,
                 'from' => $sender->email,
                 'to' => $receiver->email,
+                'type' => 'out',
+            ]);
+
+            // Credit to receiver
+            $receiver->shopping_wallet += $amount;
+            $receiver->save();
+
+            TransferHistory::create([
+                'user_id' => $receiver->id,
+                'amount' => $amount,
+                'from' => $sender->email,
+                'to' => $receiver->email,
+                'type' => 'in',
             ]);
 
             DB::commit();

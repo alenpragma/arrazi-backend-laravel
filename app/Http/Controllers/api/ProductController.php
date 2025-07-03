@@ -95,7 +95,7 @@ class ProductController extends Controller
             }
             $user->save();
 
-            $this->distributeLeftChainPoints($user, $totalPoints);
+            //$this->distributeLeftChainPoints($user, $totalPoints);
             $this->giveReferralBonus($user, $totalPoints);
 
             DB::commit();
@@ -142,23 +142,23 @@ class ProductController extends Controller
 
 
 
-    private function distributeLeftChainPoints(User $user, int $points): void
-    {
-        $current = $user;
-
-        while ($current && $current->upline_id) {
-            $upline = User::find($current->upline_id);
-
-            if ($upline && $upline->left_user_id === $current->id) {
-                $upline->points = ($upline->points ?? 0) + $points;
-                $upline->save();
-            } else {
-                break;
-            }
-
-            $current = $upline;
-        }
-    }
+//    private function distributeLeftChainPoints(User $user, int $points): void
+//    {
+//        $current = $user;
+//
+//        while ($current && $current->upline_id) {
+//            $upline = User::find($current->upline_id);
+//
+//            if ($upline && $upline->left_user_id === $current->id) {
+//                $upline->points = ($upline->points ?? 0) + $points;
+//                $upline->save();
+//            } else {
+//                break;
+//            }
+//
+//            $current = $upline;
+//        }
+//    }
 
     private function giveReferralBonus(User $user, int $totalPoints): void
     {

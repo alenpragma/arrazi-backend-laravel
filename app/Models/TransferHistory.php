@@ -12,6 +12,7 @@ class TransferHistory extends Model
         'amount',
         'user_id',
         'frm',
-        'to'
+        'to',
+        'type'
     ];
 }

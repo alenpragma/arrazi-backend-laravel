@@ -35,7 +35,7 @@ class WithdrawController extends Controller
             'method' => $method,
             'amount' => $amount,
             'number' => $number,
-            'status' => 0,
+            'status' => 'pending',
         ]);
 
 

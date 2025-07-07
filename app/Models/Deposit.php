@@ -17,4 +17,9 @@ class Deposit extends Model
         'status',
         'number',
     ];
+
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }

@@ -73,6 +73,12 @@
 							</div> --}}
 						</li>
                         <li class="nav-item">
+							<a href="{{route('admin.dealers.list')}}">
+								<i class="fas fa-user-tie"></i>
+								<p>Dealer</p>
+							</a>
+						</li>
+                        <li class="nav-item">
 							<a data-bs-toggle="collapse" href="#deposit">
 								<i class="far fa-money-bill-alt"></i>
 								<p>Deposit <span class="text-danger">🔴({{ $pendingDepositCount ?? 0 }})</span></span></p>
@@ -137,7 +143,7 @@
 
                         <li class="nav-item">
 							<a data-bs-toggle="collapse" href="#products">
-								<i class="far fa-money-bill-alt"></i>
+								<i class="fas fa-boxes"></i>
 								<p>Products</p>
 								<span class="caret"></span>
 							</a>
@@ -155,6 +161,13 @@
 									</li>
 								</ul>
 							</div>
+						</li>
+
+                        <li class="nav-item">
+							<a href="{{route('admin.stocks.index')}}">
+								<i class="fas fa-tasks"></i>
+								<p>Stock Buyer</p>
+							</a>
 						</li>
 
                         <li class="nav-item">

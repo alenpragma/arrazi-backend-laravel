@@ -2,13 +2,14 @@
 
 use App\Models\Withdraw;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\DepositController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\WithdrawController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\DepositController;
 use App\Http\Controllers\Admin\GeneralSettingsController;
 
 Route::get('/', function () {
@@ -31,6 +32,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             'show' => 'admin.users.show',
 
         ]);
+        Route::get('/dealers', [UserController::class, 'dealerList'])->name('admin.dealers.list');
+        Route::get('/dealers/{id}', [UserController::class, 'showDealer'])->name('admin.dealers.show');
 
      // Products
      Route::resource('products', ProductController::class)->names([
@@ -59,11 +62,14 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::get('/withdraws/rejected', [WithdrawController::class, 'rejectWithdraw'])->name('admin.withdraws.rejected');
 
 
- // Deposits
- Route::get('/deposits', [DepositController::class, 'index'])->name('admin.deposit');
- Route::post('/deposits/{id}/status', [DepositController::class, 'updateStatus'])->name('admin.deposits.updateStatus');
- Route::get('/deposits/pending', [DepositController::class, 'pendingDeposits'])->name('admin.deposits.pending');
- Route::get('/deposits/rejected', [DepositController::class, 'rejectDeposits'])->name('admin.deposits.rejected');
+    // Deposits
+    Route::get('/deposits', [DepositController::class, 'index'])->name('admin.deposit');
+    Route::post('/deposits/{id}/status', [DepositController::class, 'updateStatus'])->name('admin.deposits.updateStatus');
+    Route::get('/deposits/pending', [DepositController::class, 'pendingDeposits'])->name('admin.deposits.pending');
+    Route::get('/deposits/rejected', [DepositController::class, 'rejectDeposits'])->name('admin.deposits.rejected');
+
+    // Stocks
+    Route::get('/stocks', [StockController::class, 'index'])->name('admin.stocks.index');
 
 
     // For profile route

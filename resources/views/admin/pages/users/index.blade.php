@@ -5,6 +5,11 @@
     <div class="card-header">
         <div class="card-title">All Users</div>
     </div>
+
+    <form method="GET" action="{{ route('admin.users.index') }}" class="mb-3 mt-3 d-flex">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search by name, email or phone" value="{{ request('search') }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
     <div class="card-body table-responsive">
         <table class="table table-striped table-hover table-head-bg-primary mt-4">
             <thead>

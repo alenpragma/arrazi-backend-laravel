@@ -7,6 +7,7 @@ use App\Models\Stocks;
 use Illuminate\Http\Request;
 use App\Models\GeneralSetting;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 class StockController extends Controller
 {
@@ -50,11 +51,14 @@ class StockController extends Controller
         $settings = GeneralSetting::first();
         $stockLimit = $settings->max_stock_per_user ?? 20;
 
-        $userStockCount = Stocks::where('user_id', $user->id)->count();
-        if ($userStockCount >= $stockLimit) {
+        $todayCount = Stocks::where('user_id', $user->id)
+        ->whereDate('created_at', Carbon::today())
+        ->count();
+
+        if ($todayCount >= $stockLimit) {
             return response()->json([
                 'status' => false,
-                'message' => "You have reached the maximum stock purchase limit of $stockLimit.",
+                'message' => "You have reached your daily stock purchase limit of $stockLimit.",
             ], 403);
         }
 

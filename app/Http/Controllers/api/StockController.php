@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Stocks;
 use App\Models\User;
+use App\Models\Stocks;
 use Illuminate\Http\Request;
+use App\Models\GeneralSetting;
+use App\Http\Controllers\Controller;
 
 class StockController extends Controller
 {
@@ -44,6 +45,17 @@ class StockController extends Controller
                 'status' => false,
                 'message' => 'you dont have enough money to buy this stock',
             ],400);
+        }
+
+        $settings = GeneralSetting::first();
+        $stockLimit = $settings->max_stock_per_user ?? 20;
+
+        $userStockCount = Stocks::where('user_id', $user->id)->count();
+        if ($userStockCount >= $stockLimit) {
+            return response()->json([
+                'status' => false,
+                'message' => "You have reached the maximum stock purchase limit of $stockLimit.",
+            ], 403);
         }
 
         $user->shopping_wallet -= 210;

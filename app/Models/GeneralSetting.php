@@ -13,6 +13,7 @@ class GeneralSetting extends Model
         'app_name',
         'logo',
         'favicon',
+        'max_stock_per_user',
     ];
 }
 

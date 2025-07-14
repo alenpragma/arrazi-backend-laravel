@@ -3,10 +3,10 @@
 @section('content')
 <div class="container">
 
-    {{-- <h2>Activation Settings</h2> --}}
-    @if(session('success'))
+    <h2>General Settings</h2>
+    {{-- @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    @endif --}}
     <form class="mt-4" action="{{ route('admin.general.settings.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
@@ -33,7 +33,10 @@
             <label for="max_withdraw">Maximum Amount ($)</label>
             <input type="number" step="0.01" id="max_withdraw" name="max_withdraw" value="{{ old('max_withdraw', $generalSettings->max_withdraw) }}" required class="form-control">
         </div> --}}
-
+        <div class="mb-3">
+            <label for="max_stock_per_user">Max. Stock Buy per User</label>
+            <input type="number" step="0.01" id="max_stock_per_user" name="max_stock_per_user" value="{{ old('max_stock_per_user', $generalSettings->max_stock_per_user) }}" required class="form-control">
+        </div>
         <h2>App Settings</h2>
 
         <div class="mb-3">

@@ -12,6 +12,16 @@ class GeneralSettingsController extends Controller
     public function index()
     {
         $generalSettings = GeneralSetting::first();
+        if (!$generalSettings) {
+            $generalSettings = GeneralSetting::create([
+                'app_name' => 'My App',
+                'max_stock_per_user' => 20,
+                'activation_amount' => 0,
+                'bonus_token' => 0,
+                'min_withdraw' => 0,
+                'max_withdraw' => 0,
+            ]);
+        }
         return view('admin.pages.settings.general_settings', compact('generalSettings'));
     }
 
@@ -25,12 +35,13 @@ class GeneralSettingsController extends Controller
             'app_name' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'favicon' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
+            'max_stock_per_user' => 'required|numeric|min:1',
         ]);
 
         $generalSettings = GeneralSetting::first();
 
         $data = $request->only([
-            'activation_amount', 'bonus_token', 'min_withdraw', 'max_withdraw', 'app_name'
+            'activation_amount', 'bonus_token', 'min_withdraw', 'max_withdraw', 'app_name', 'max_stock_per_user'
         ]);
 
 

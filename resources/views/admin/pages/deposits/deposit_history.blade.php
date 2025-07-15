@@ -29,7 +29,7 @@
                         <td>{{ $deposit->user->name ?? 'Unknown' }}</td>
                         <td>{{ $deposit->amount }}</td>
                         <td>{{ $deposit->currency }}</td>
-                        <td>{{ $deposit->payment_method }}</td>
+                        <td>{{ $deposit->paymentMethod->method_name ?? 'N/A' }}</td>
                         <td>{{ $deposit->number }}</td>
                         <td>
                             <span class="badge

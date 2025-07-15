@@ -28,7 +28,7 @@
                         <td>{{ $deposit->user->name ?? 'N/A' }}</td>
                         <td>{{ $deposit->amount }}</td>
                         <td>{{ $deposit->currency }}</td>
-                        <td>{{ $deposit->payment_method }}</td>
+                        <td>{{ $deposit->paymentMethod->method_name ?? 'N/A' }}</td>
                         <td>{{ $deposit->number }}</td>
                         <td>{{ $deposit->transaction_id }}</td>
                         <td><span class="badge bg-danger">Rejected</span></td>

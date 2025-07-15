@@ -10,7 +10,7 @@ class DepositController extends Controller
 {
     public function index()
     {
-        $deposits = Deposit::with('user')->latest()->paginate(10);
+        $deposits = Deposit::with(['user', 'paymentMethod'])->latest()->paginate(10);
 
         return view('admin.pages.deposits.deposit_history', compact('deposits'));
     }
@@ -22,7 +22,6 @@ class DepositController extends Controller
         ]);
 
         $deposit = Deposit::findOrFail($id);
-
 
         if ($request->status === 'approved' && $deposit->status !== 'approved') {
             $user = $deposit->user;
@@ -40,17 +39,21 @@ class DepositController extends Controller
 
     public function pendingDeposits()
     {
-        $pendingDeposits = Deposit::with('user')->where('status', 'pending')->latest()->paginate(10);
-        // $pendingDepositCount = Deposit::where('status', 'pending')->count();
+        $pendingDeposits = Deposit::with(['user', 'paymentMethod'])
+            ->where('status', 'pending')
+            ->latest()
+            ->paginate(10);
 
         return view('admin.pages.deposits.pending_deposit', compact('pendingDeposits'));
     }
+
     public function rejectDeposits()
     {
-        $rejectedDeposits = Deposit::with('user')->where('status', 'rejected')->latest()->paginate(10);
+        $rejectedDeposits = Deposit::with(['user', 'paymentMethod'])
+            ->where('status', 'rejected')
+            ->latest()
+            ->paginate(10);
 
         return view('admin.pages.deposits.rejected_deposit', compact('rejectedDeposits'));
     }
 }
-
-

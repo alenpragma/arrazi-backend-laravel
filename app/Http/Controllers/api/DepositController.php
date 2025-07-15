@@ -10,19 +10,19 @@ use Illuminate\Http\Request;
 
 class DepositController extends Controller
 {
-    public function depositRequest(Request $request): JsonResponse{
-
+ public function depositRequest(Request $request): JsonResponse
+    {
         try {
             $request->validate([
                 'amount' => 'required|numeric|min:1|not_in:0',
-                'method_id' => 'required',
+                'method_id' => 'required|exists:payment_method,id',
                 'transaction_id' => 'required|string|unique:deposits,transaction_id',
                 'number' => 'required|string|max:15|min:10',
             ]);
 
-            $payment = PaymentMethod::where('id', $request->input('method_id'))->first();
+            $payment = PaymentMethod::find($request->method_id);
 
-            if ($payment == null ) {
+            if (!$payment) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Payment method not found',
@@ -31,22 +31,31 @@ class DepositController extends Controller
 
             $user = $request->user();
 
-        $deposit =   Deposit::create([
+            $deposit = Deposit::create([
                 'user_id' => $user->id,
-                'payment_method' => $payment->method_name,
-                'transaction_id' => $request->input('transaction_id'),
-                'number' => $request->input('number'),
-                'amount' => $request->input('amount'),
+                'payment_method_id' => $payment->id,
+                'transaction_id' => $request->transaction_id,
+                'number' => $request->number,
+                'amount' => $request->amount,
                 'type' => 'deposit',
                 'currency' => 'BDT',
+                'status' => 'pending',
             ]);
 
             return response()->json([
                 'status' => true,
-                'message' => 'Deposit request submitted successfully please waiting for approval',
-                'deposit' => $deposit,
+                'message' => 'Deposit request submitted successfully. Please wait for approval.',
+                'deposit' => [
+                    'id' => $deposit->id,
+                    'amount' => $deposit->amount,
+                    'number' => $deposit->number,
+                    'transaction_id' => $deposit->transaction_id,
+                    'payment_method' => $payment->method_name,
+                    'status' => $deposit->status,
+                    'created_at' => $deposit->created_at->toDateTimeString(),
+                ],
             ]);
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return response()->json([
                 'status' => false,
                 'message' => $exception->getMessage(),

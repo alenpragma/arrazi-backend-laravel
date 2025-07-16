@@ -20,7 +20,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total Deposit</p>
-                                <h4 class="card-title">$</h4>
+                                <h4 class="card-title">${{$data['depositCount']}}</h4>
                             </div>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total Withdraw</p>
-                                <h4 class="card-title">$</h4>
+                                <h4 class="card-title">${{$data['withdrawCount']}}</h4>
                             </div>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total Products</p>
-                                <h4 class="card-title"></h4>
+                                <h4 class="card-title">{{$data['productCount']}}</h4>
                             </div>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Pending Orders</p>
-                                <h4 class="card-title"></h4>
+                                <h4 class="card-title">{{$data['pendingOrderCount']}}</h4>
                             </div>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total Stocks</p>
-                                <h4 class="card-title"></h4>
+                                <h4 class="card-title">{{$data['totalStocks']}}</h4>
                             </div>
                         </div>
                     </div>
@@ -115,7 +115,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total Users</p>
-                                <h4 class="card-title"> </h4>
+                                <h4 class="card-title">{{$data['userCount']}} </h4>
                             </div>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total Active Users</p>
-                                <h4 class="card-title"></h4>
+                                <h4 class="card-title">{{$data['activeUserCount']}}</h4>
                             </div>
                         </div>
                     </div>
@@ -153,7 +153,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total Dealers</p>
-                                <h4 class="card-title"></h4>
+                                <h4 class="card-title">{{$data['totalDealer']}}</h4>
                             </div>
                         </div>
                     </div>
@@ -263,7 +263,7 @@
                     <div class="card-head-row card-tools-still-right">
                         <div class="card-title">New Users</div>
                         <div class="card-tools">
-                            {{-- <div class="dropdown">
+                            <div class="dropdown">
                                 <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-ellipsis-h"></i>
                                 </button>
@@ -272,15 +272,15 @@
                                     <a class="dropdown-item" href="#">Another action</a>
                                     <a class="dropdown-item" href="#">status</a>
                                 </div>
-                            </div> --}}
+                            </div>
                         </div>
                     </div>
-                    {{-- <div class="card-list py-4">
-                        @foreach ($users as $user)
+                    <div class="card-list py-4">
+                        @foreach ($data['newUsers'] as $user)
                         <div class="item-list">
                             <div class="info-user ms-3">
                                 <div class="name">{{ $user->name }}</div>
-                                <div class="username">@ {{ $user->username }}</div>
+                                <div class="email">{{ $user->email }}</div>
                             </div>
                             <div class="status"><span class="badge
                                 @if ($user->is_active)
@@ -293,7 +293,7 @@
                             </span></div>
                         </div>
                         @endforeach
-                    </div> --}}
+                    </div>
                 </div>
             </div>
         </div>
@@ -302,7 +302,7 @@
                 <div class="card-header">
                     <div class="card-head-row card-tools-still-right">
                         <div class="card-title">Recent Transactions</div>
-                        {{-- <div class="card-tools">
+                        <div class="card-tools">
                             <div class="dropdown">
                                 <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-ellipsis-h"></i>
@@ -313,7 +313,7 @@
                                     <a class="dropdown-item" href="#">Something else here</a>
                                 </div>
                             </div>
-                        </div> --}}
+                        </div>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -327,21 +327,27 @@
                                     <th scope="col" class="text-end">Date</th>
                                 </tr>
                             </thead>
-                            {{-- <tbody>
-                                @foreach($recentTransactions as $transaction)
+                            <tbody>
+                                @foreach($data['recentTransactions'] as $transaction)
                                 <tr>
-                                    <th scope="row">
-                                       @ {{ $transaction->user->username ?? 'N/A' }}
-                                    </th>
-                                    <td class="text-end">
-                                        {{ $transaction->description }}
+                                    <td>
+                                        <div class="info-user ms-3">
+                                            <div class="name">{{ $user->name }}</div>
+                                            <div class="username">{{ $user->email }}</div>
+                                        </div>
                                     </td>
                                     <td class="text-end">
-                                        {{ $transaction->created_at->format('Y-m-d H:i') }}
+                                        {{-- {{ $transaction['type'] }} -  --}}
+                                        {{ $transaction['description'] }}
+                                        <br>
+                                        <small class="text-muted">${{ number_format($transaction['amount'], 2) }}</small>
+                                    </td>
+                                    <td class="text-end">
+                                        {{ \Carbon\Carbon::parse($transaction['created_at'])->format('Y-m-d H:i') }}
                                     </td>
                                 </tr>
                                 @endforeach
-                            </tbody> --}}
+                                </tbody>
                         </table>
                     </div>
                 </div>

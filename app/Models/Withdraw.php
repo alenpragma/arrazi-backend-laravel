@@ -11,6 +11,9 @@ class Withdraw extends Model
         'user_id',
         'number',
         'amount',
+        'net_amount',
+        'shopping_amount',
+        'charge',
         'method',
         'status',
     ];

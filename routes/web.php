@@ -2,15 +2,16 @@
 
 use App\Models\Withdraw;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\DepositController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\WithdrawController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GeneralSettingsController;
+use App\Http\Controllers\Admin\TransferHistoryController;
 
 Route::get('/', function () {
     return redirect('/signin');
@@ -79,5 +80,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     // General Settings
     Route::get('general-settings', [GeneralSettingsController::class, 'index'])->name('admin.general.settings');
     Route::post('general-settings', [GeneralSettingsController::class, 'update'])->name('admin.general.settings.update');
+
+    // Transfer History
+    Route::get('transfer-history', [TransferHistoryController::class, 'index'])->name('admin.transfer-history.index');
 
 });

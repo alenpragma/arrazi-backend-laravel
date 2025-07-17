@@ -13,6 +13,8 @@
                     <th scope="col">Date</th>
                     <th scope="col">User</th>
                     <th scope="col">Amount</th>
+                    <th scope="col">Net Amount</th>
+                    <th scope="col">Add to Shopping Wallet</th>
                     <th scope="col">Number</th>
                     <th scope="col">Method</th>
                     <th scope="col">Status</th>
@@ -26,6 +28,8 @@
                         <td>{{ $withdraw->created_at ? $withdraw->created_at->format('Y-m-d H:i') : '-' }}</td>
                         <td>{{ $withdraw->user->name ?? 'N/A' }}</td>
                         <td>{{ $withdraw->amount }}</td>
+                        <td>{{ $withdraw->net_amount ?? 0.00}}</td>
+                        <td>{{ $withdraw->shopping_amount ?? 0.00 }}</td>
                         <td>{{ $withdraw->number }}</td>
                         <td>{{ $withdraw->method }}</td>
                         <td>

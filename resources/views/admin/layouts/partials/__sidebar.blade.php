@@ -202,6 +202,12 @@
 								<p>Transactions History</p>
 							</a>
 						</li> --}}
+                         <li class="nav-item">
+							<a href="{{route('admin.transfer-history.index')}}">
+								<i class="fas fa-exchange-alt"></i>
+								<p>Transfer History</p>
+							</a>
+						</li>
                         <li class="nav-item">
 							<a data-bs-toggle="collapse" href="#settings">
 								<i class="fas fa-cog"></i>

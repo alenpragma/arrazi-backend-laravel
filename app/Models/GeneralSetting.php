@@ -14,6 +14,9 @@ class GeneralSetting extends Model
         'logo',
         'favicon',
         'max_stock_per_user',
+        'withdraw_shopping_wallet_percentage',
+        'withdraw_charge',
+
     ];
 }
 

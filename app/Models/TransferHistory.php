@@ -11,8 +11,12 @@ class TransferHistory extends Model
     protected $fillable = [
         'amount',
         'user_id',
-        'frm',
+        'from',
         'to',
         'type'
     ];
+    public function user()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
 }

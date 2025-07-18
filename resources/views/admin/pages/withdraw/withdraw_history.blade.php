@@ -13,8 +13,9 @@
                     <th scope="col">Date</th>
                     <th scope="col">User</th>
                     <th scope="col">Amount</th>
-                    <th scope="col">Net Amount</th>
+                    <th scope="col">Charge</th>
                     <th scope="col">Add to Shopping Wallet</th>
+                    <th scope="col">Net Amount</th>
                     <th scope="col">Number</th>
                     <th scope="col">Method</th>
                     <th scope="col">Status</th>
@@ -27,9 +28,10 @@
                         <td>{{ $index + 1}}</td>
                         <td>{{ $withdraw->created_at ? $withdraw->created_at->format('Y-m-d H:i') : '-' }}</td>
                         <td>{{ $withdraw->user->name ?? 'N/A' }}</td>
-                        <td>{{ $withdraw->amount }}</td>
-                        <td>{{ $withdraw->net_amount ?? 0.00}}</td>
-                        <td>{{ $withdraw->shopping_amount ?? 0.00 }}</td>
+                        <td>{{ number_format($withdraw->amount, 2) }}</td>
+                        <td>{{ number_format($withdraw->charge, 2) }}</td>
+                        <td>{{ number_format($withdraw->shopping_amount, 2) }}</td>
+                        <td>{{ number_format($withdraw->net_amount, 2) }}</td>
                         <td>{{ $withdraw->number }}</td>
                         <td>{{ $withdraw->method }}</td>
                         <td>
@@ -43,7 +45,7 @@
                         </td>
                         <td>
                             @if($withdraw->status === 'pending')
-                                <form style="width: auto; background:none; border:none; margin:0"  method="POST" action="{{ route('admin.withdraws.updateStatus', $withdraw->id) }}">
+                                <form style="width: auto; background:none; border:none; margin:0" method="POST" action="{{ route('admin.withdraws.updateStatus', $withdraw->id) }}">
                                     @csrf
                                     <button type="submit" name="status" value="approve" class="btn btn-success btn-sm">Approve</button>
                                     <button type="submit" name="status" value="reject" class="btn btn-danger btn-sm">Reject</button>
@@ -53,19 +55,16 @@
                             @endif
                         </td>
                     </tr>
-                    @empty
+                @empty
                     <tr>
-                        <td colspan="8" class="text-center">No Withdraw found</td>
+                        <td colspan="11" class="text-center">No Withdraw found</td>
                     </tr>
                 @endforelse
-
             </tbody>
         </table>
         <div class="d-flex justify-content-center">
             {{ $withdraws->links('admin.layouts.partials.__pagination') }}
         </div>
-
     </div>
 </div>
 @endsection
-

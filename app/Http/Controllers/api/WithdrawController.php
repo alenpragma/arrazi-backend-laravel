@@ -1,72 +1,122 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Withdraw;
-use App\Models\GeneralSetting;
 use Illuminate\Http\Request;
+use App\Models\GeneralSetting;
+use App\Http\Controllers\Controller;
 
 class WithdrawController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $withdraws = Withdraw::with('user')->latest()->paginate(10);
+        $user = $request->user();
 
-        return view('admin.pages.withdraw.withdraw_history', compact('withdraws'));
-    }
+        $withdrawals = Withdraw::where('user_id', $user->id)
+            ->orderBy('id', 'desc')
+            ->paginate(10);
 
-    public function pendingWithdraw()
-    {
-        $pendingWithdraws = Withdraw::with('user')->where('status', 'pending')->latest()->paginate(10);
-        $pendingCount = Withdraw::where('status', 'pending')->count();
-
-        return view('admin.pages.withdraw.pending_withdraw', compact('pendingWithdraws', 'pendingCount'));
-    }
-
-    public function rejectWithdraw()
-    {
-        $rejectWithdraws = Withdraw::with('user')->where('status', 'rejected')->latest()->paginate(10);
-
-        return view('admin.pages.withdraw.reject_withdraw', compact('rejectWithdraws'));
-    }
-
-    public function updateStatus(Request $request, $id)
-    {
-        $withdraw = Withdraw::with('user')->findOrFail($id);
-
-        if ($withdraw->status !== 'pending') {
-            return redirect()->back()->with('error', 'This request is already processed.');
-        }
-
-        $user = $withdraw->user;
         $settings = GeneralSetting::first();
         $percent = $settings->withdraw_shopping_wallet_percentage ?? 0;
         $chargePercent = $settings->withdraw_charge ?? 0;
 
-        if ($request->status === 'approve') {
-            $charge = ($withdraw->amount * $chargePercent) / 100;
-            $shoppingAmount = ($withdraw->amount * $percent) / 100;
-            $netAmount = $withdraw->amount - $charge - $shoppingAmount;
+        $formattedWithdrawals = $withdrawals->map(function ($withdrawal) use ($percent, $chargePercent) {
+            if ($withdrawal->status === 'pending' &&
+                (is_null($withdrawal->net_amount) || is_null($withdrawal->shopping_amount) || is_null($withdrawal->charge))) {
+                $charge = ($withdrawal->amount * $chargePercent) / 100;
+                // $remainingAmount = $withdrawal->amount - $charge;
+                $shoppingAmount = ($withdrawal->amount * $percent) / 100;
+                $netAmount = $withdrawal->amount - $charge - $shoppingAmount;
+            } else {
+                $charge = $withdrawal->charge;
+                $shoppingAmount = $withdrawal->shopping_amount;
+                $netAmount = $withdrawal->net_amount;
+            }
 
-            $user->shopping_wallet += $shoppingAmount;
-            $user->save();
+            return [
+                'id' => $withdrawal->id,
+                'amount' => $withdrawal->amount,
+                'charge' => round($charge, 2),
+                'net_amount' => round($netAmount, 2),
+                'shopping_amount' => round($shoppingAmount, 2),
+                'method' => $withdrawal->method,
+                'number' => $withdrawal->number,
+                'status' => $withdrawal->status,
+                'created_at' => $withdrawal->created_at->format('Y-m-d H:i:s'),
+                'updated_at' => $withdrawal->updated_at->format('Y-m-d H:i:s'),
+            ];
+        });
 
-            $withdraw->charge = $charge;
-            $withdraw->shopping_amount = $shoppingAmount;
-            $withdraw->net_amount = $netAmount;
-            $withdraw->status = 'approved';
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'withdrawals' => $formattedWithdrawals,
+                'pagination' => [
+                    'current_page' => $withdrawals->currentPage(),
+                    'per_page' => $withdrawals->perPage(),
+                    'total' => $withdrawals->total(),
+                    'last_page' => $withdrawals->lastPage(),
+                ]
+            ]
+        ]);
+    }
 
-        } elseif ($request->status === 'reject') {
+    public function withdrawRequest(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'number' => 'required',
+            'method' => 'required',
+        ]);
 
-            $user->income_wallet += $withdraw->amount;
-            $user->save();
+        $user = $request->user();
+        $amount = $request->input('amount');
 
-            $withdraw->status = 'rejected';
+        if ($amount > $user->income_wallet) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Insufficient funds',
+                'balance' => $user->income_wallet
+            ], 400);
         }
 
-        $withdraw->save();
+        $settings = GeneralSetting::first();
+        $percent = $settings->withdraw_shopping_wallet_percentage ?? 0;
+        $chargePercent = $settings->withdraw_charge ?? 0;
 
-        return redirect()->back()->with('success', 'Withdraw status updated.');
+        $charge = ($amount * $chargePercent) / 100;
+        $shoppingAmount = ($amount * $percent) / 100;
+        $netAmount = $amount - $charge - $shoppingAmount;
+
+        $user->income_wallet -= $amount;
+        $user->save();
+
+        $withdrawal = Withdraw::create([
+            'user_id' => $user->id,
+            'method' => $request->method,
+            'amount' => $amount,
+            'number' => $request->number,
+            'status' => 'pending',
+            'charge' => $charge,
+            'shopping_amount' => $shoppingAmount,
+            'net_amount' => $netAmount,
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Withdrawal request submitted successfully',
+            'data' => [
+                'id' => $withdrawal->id,
+                'amount' => $withdrawal->amount,
+                'charge' => round($charge, 2),
+                'net_amount' => round($netAmount, 2),
+                'shopping_amount' => round($shoppingAmount, 2),
+                'method' => $withdrawal->method,
+                'number' => $withdrawal->number,
+                'status' => $withdrawal->status,
+                'created_at' => $withdrawal->created_at->format('Y-m-d H:i:s'),
+            ]
+        ]);
     }
 }

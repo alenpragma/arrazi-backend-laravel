@@ -18,5 +18,6 @@ class GeneralSetting extends Model
         'withdraw_charge',
 
     ];
+    
 }
 

@@ -54,3 +54,6 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 
 //cron
 Route::get('cron', [CronController::class, 'cron']);
+
+Route::post('forget-password-send-mail',[AuthController::class, 'ForgotPasswordSendEmail']);
+Route::post('reset-password',[AuthController::class, 'ResetPassword']);

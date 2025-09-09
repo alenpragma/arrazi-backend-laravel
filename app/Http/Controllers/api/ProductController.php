@@ -131,11 +131,6 @@ class ProductController extends Controller
         $totalOrder = Order::where('user_id', $user->id)->count();
         $totalPoints = Order::where('user_id', $user->id)->sum('pv');
         $totalCost = Order::where('user_id',$user->id)->sum('amount');
-
-           // Calculate total team PV
-        $directReferralIds = User::where('refer_by', $user->id)->pluck('id');
-        $directReferralPV = Order::whereIn('user_id', $directReferralIds)->sum('pv');
-
         return response()->json([
             'status' => true,
             'message' => 'Order list retrieved successfully.',
@@ -148,10 +143,10 @@ class ProductController extends Controller
             'totalPoints' => $totalPoints,
             'totalCost' => $totalCost,
             'points' => $user->points ?? 0,
-            'total_referral_pv'  => $directReferralPV,
         ]);
 
     }
+
 
 
 //    private function distributeLeftChainPoints(User $user, int $points): void

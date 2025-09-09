@@ -26,7 +26,7 @@ class ProductController extends Controller
                 ], 404);
             }
 
-              $product->image_url = $product->images ? url('storage/' . $product->images) : null;
+              $product->images = $product->images ? url('storage/' . $product->images) : null;
 
             return response()->json([
                 'status' => true,
@@ -38,7 +38,7 @@ class ProductController extends Controller
 
         $products = Product::where('stock', '>', 0)->select('title','slug','images','points','sale_price','id','regular_price')->paginate(10);
         $products->getCollection()->transform(function ($product) {
-        $product->image_url = $product->images ? url('storage/' . $product->images) : null;
+        $product->images = $product->images ? url('storage/' . $product->images) : null;
         return $product;
         });
 

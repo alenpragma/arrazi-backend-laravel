@@ -16,8 +16,8 @@
 <body>
     <div class="wrapper">
         <div class="logo">
-            @if(isset($generalSettings->logo))
-        <img src="{{ asset('storage/' . $generalSettings->logo) }}" alt="Main logo" height="40px">
+            @if(isset($generalSettings->favicon))
+        <img src="{{ asset('storage/' . $generalSettings->favicon) }}" alt="Main logo">
     @endif
         </div>
         <div class="text-center mt-4 name">

@@ -95,7 +95,7 @@
                                         <input type="number" step="0.01" id="pv_value" name="pv_value"
                                             value="{{ old('pv_value', $generalSettings->pv_value ?? 2) }}"
                                             required class="form-control">
-                                        <span class="input-group-text">$</span>
+                                        <span class="input-group-text">&#x09F3;</span>
                                     </div>
                                 </div>
                             </div>

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\FundBonusHistory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
@@ -182,5 +183,35 @@ class ProductController extends Controller
             $referrer->income_wallet = ($referrer->income_wallet ?? 0) + $bonus;
             $referrer->save();
         }
+    }
+
+
+    public function fundBonusHistory(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        $history = FundBonusHistory::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($item){
+                return [
+                    'id' => $item->id,
+                    'fund_name' => $item->fund_name,
+                    'amount' => $item->amount,
+                    'description' => $item->description,
+                    'date' => $item->created_at->format('Y-m-d H:i:s')
+                ];
+            });
+
+        return response()->json([
+            'status' => true,
+            'data' => $history,
+        ]);
     }
 }

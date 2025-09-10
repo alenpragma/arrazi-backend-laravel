@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Models\Fund;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Stocks;
@@ -35,6 +36,7 @@ class DashboardController extends Controller
         $pendingOrderCount = Order::where('status', 'pending')->count();
         $productCount = Product::count();
         $totalStocks = Stocks::count();
+        $totalClubUsers = User::where('is_club', 1)->count();
 
         $newUsers = User::where('role', '!=', 'admin')->latest()->take(5)->get();
 
@@ -75,6 +77,12 @@ class DashboardController extends Controller
             ->take(10)
             ->values();
 
+        $clubFundAmount = Fund::where('name', 'Club Fund')->value('amount');
+        $insuranceFundAmount = Fund::where('name', 'Insurance Fund')->value('amount');
+        $poorFundAmount = Fund::where('name', 'Poor Fund')->value('amount');
+        $rankFundAmount = Fund::where('name', 'Rank Fund')->value('amount');
+
+
         $data = [
             'userCount' => $userCount,
             'activeUserCount' => $activeUserCount,
@@ -87,6 +95,11 @@ class DashboardController extends Controller
             'totalDealer' => $dealerCount,
             'newUsers' => $newUsers,
             'recentTransactions' => $recentTransactions,
+            'totalClubUsers' => $totalClubUsers,
+            'clubFunds' => $clubFundAmount,
+            'insuranceFunds'=> $insuranceFundAmount,
+            'poorFunds'=> $poorFundAmount,
+            'rankFunds'=> $rankFundAmount,
         ];
 
 

@@ -16,8 +16,11 @@ class GeneralSetting extends Model
         'max_stock_per_user',
         'withdraw_shopping_wallet_percentage',
         'withdraw_charge',
+        'club_required_pv',
+        'club_image',
+        'pv_value',
 
     ];
-    
+
 }
 

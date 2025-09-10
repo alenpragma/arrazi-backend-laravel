@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\GeneralSetting;
+use App\Models\ClubSetting;
 use Illuminate\Http\Request;
+use App\Models\GeneralSetting;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
 class GeneralSettingsController extends Controller
@@ -25,7 +26,9 @@ class GeneralSettingsController extends Controller
             'max_stock_per_user' => 'required|numeric|min:1',
             'withdraw_shopping_wallet_percentage' => 'required|numeric|min:0|max:100',
             'withdraw_charge' => 'required|numeric|min:0|max:100',
-        ]);
+            'club_required_pv' => 'required|numeric|min:0',
+            'pv_value' => 'required|numeric|min:0',
+            ]);
 
         $generalSettings = GeneralSetting::first();
 
@@ -35,6 +38,9 @@ class GeneralSettingsController extends Controller
                 'max_stock_per_user' => $request->max_stock_per_user,
                 'withdraw_shopping_wallet_percentage' => $request->withdraw_shopping_wallet_percentage,
                 'withdraw_charge' => $request->withdraw_charge,
+                'club_required_pv' => $request->club_required_pv,
+                'pv_value' => $request->pv_value,
+
             ]);
         }
 
@@ -42,7 +48,9 @@ class GeneralSettingsController extends Controller
             'app_name',
             'max_stock_per_user',
             'withdraw_shopping_wallet_percentage',
-            'withdraw_charge'
+            'withdraw_charge',
+            'club_required_pv',
+            'pv_value'
         ]);
 
         if ($request->hasFile('logo')) {
@@ -58,9 +66,17 @@ class GeneralSettingsController extends Controller
             }
             $data['favicon'] = $request->file('favicon')->store('favicons', 'public');
         }
+        if ($request->hasFile('club_image')) {
+            if ($generalSettings->club_image) {
+                Storage::disk('public')->delete($generalSettings->club_image);
+            }
+            $data['club_image'] = $request->file('club_image')->store('club_images', 'public');
+        }
 
         $generalSettings->update($data);
 
         return redirect()->route('admin.general.settings')->with('success', 'Settings updated successfully!');
     }
+
+
 }

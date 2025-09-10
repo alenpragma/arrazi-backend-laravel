@@ -17,6 +17,14 @@
                     <button class="nav-link active" id="v-pills-stock-tab" data-bs-toggle="pill" data-bs-target="#v-pills-stock" type="button" role="tab" aria-controls="v-pills-stock" aria-selected="true">
                         <i class="fas fa-box me-2"></i> Stock Settings
                     </button>
+                    <button class="nav-link" id="v-pills-club-tab" data-bs-toggle="pill" data-bs-target="#v-pills-club" type="button" role="tab" aria-controls="v-pills-club" aria-selected="false">
+                        <i class="fas fa-star me-2"></i> Club Settings
+                    </button>
+                    <button class="nav-link" id="v-pills-pv-tab" data-bs-toggle="pill"
+                        data-bs-target="#v-pills-pv" type="button" role="tab"
+                        aria-controls="v-pills-pv" aria-selected="false">
+                        <i class="fas fa-coins me-2"></i> PV Settings
+                    </button>
                     <button class="nav-link" id="v-pills-withdraw-tab" data-bs-toggle="pill" data-bs-target="#v-pills-withdraw" type="button" role="tab" aria-controls="v-pills-withdraw" aria-selected="false">
                         <i class="fas fa-money-bill-wave me-2"></i> Withdraw Settings
                     </button>
@@ -39,6 +47,56 @@
                                     <input type="number" step="0.01" id="max_stock_per_user" name="max_stock_per_user"
                                            value="{{ old('max_stock_per_user', $generalSettings->max_stock_per_user) }}"
                                            required class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Club Settings Tab -->
+                    <div class="tab-pane fade" id="v-pills-club" role="tabpanel" aria-labelledby="v-pills-club-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-star me-2"></i> Club Settings</h5>
+
+                                <div class="mb-3">
+                                    <label for="club_required_pv">Required PV</label>
+                                    <input type="number" step="0.01" id="club_required_pv" name="club_required_pv"
+                                        value="{{ old('club_required_pv', $generalSettings->club_required_pv ?? 1000) }}"
+                                        required class="form-control">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="club_image">Club Badge</label>
+                                    <input type="file" id="club_image" name="club_image" class="form-control">
+                                    @if(isset($generalSettings->club_image))
+                                        <div class="mt-2">
+                                            <img src="{{ asset('storage/' . $generalSettings->club_image) }}"
+                                                alt="Club Image"
+                                                style="max-width: 50px; max-height: 50px;">
+                                            <span class="ms-2">Current image</span>
+                                        </div>
+                                    @endif
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PV Settings Tab -->
+                    <div class="tab-pane fade" id="v-pills-pv" role="tabpanel" aria-labelledby="v-pills-pv-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-coins me-2"></i> PV Settings</h5>
+                                <div class="mb-3 d-flex align-items-center" style="gap: 10px;">
+                                    <label for="pv_value" class="form-label mb-0" style="white-space: nowrap;">
+                                        1 PV =
+                                    </label>
+                                    <div class="input-group" style="max-width: 200px;">
+                                        <input type="number" step="0.01" id="pv_value" name="pv_value"
+                                            value="{{ old('pv_value', $generalSettings->pv_value ?? 2) }}"
+                                            required class="form-control">
+                                        <span class="input-group-text">$</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -50,6 +50,8 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('withdraw-request', [WithdrawController::class, 'withdrawRequest']);
     Route::post('withdraw-history', [WithdrawController::class, 'index']);
 
+    Route::get('fund-bonus-history', [ProductController::class,'fundBonusHistory']);
+
 });
 
 //cron

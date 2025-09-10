@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\Fund;
 use App\Models\Order;
+use App\Models\ClubSetting;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\GeneralSetting;
+use App\Models\User;
 
 class OrderController extends Controller
 {
@@ -37,6 +41,52 @@ class OrderController extends Controller
         $order->status = $request->status;
         $order->save();
 
+        if ($order->status === 'completed') {
+            $this->updateFunds($order->pv);
+        }
+
+        if ($order->user->referer) {
+            $this->checkClubEligibility($order->user->referer);
+        }
+
         return redirect()->back()->with('success', 'Order status updated successfully.');
     }
+
+    private function updateFunds($pv)
+    {
+        $settings = GeneralSetting::first();
+        $pvValue = $settings->pv_value;
+        $amount = $pv * $pvValue;
+        
+        Fund::whereIn('name', [
+        'Club Fund',
+        'Insurance Fund',
+        'Poor Fund',
+        'Rank Fund'
+        ])
+        ->where('status', 1)
+        ->increment('amount', $amount);
+    }
+
+    private function checkClubEligibility(User $user)
+    {
+        if ($user->is_club) return;
+
+        $requiredPV = GeneralSetting::first()->required_pv;
+
+        $directReferrals = $user->referrals()->pluck('id');
+
+        if ($directReferrals->isEmpty()) return;
+
+        $totalPV = Order::whereIn('user_id', $directReferrals)
+                        ->where('status', 'completed')
+                        ->sum('pv');
+
+        if ($totalPV >= $requiredPV) {
+            $user->update([
+                'is_club' => 1
+            ]);
+        }
+    }
+
 }

@@ -172,7 +172,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total Club Members</p>
-                                <h4 class="card-title"></h4>
+                                <h4 class="card-title">{{ $data['totalClubUsers']  }}</h4>
                             </div>
                         </div>
                     </div>
@@ -191,7 +191,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Club Funds</p>
-                                <h4 class="card-title"></h4>
+                                <h4 class="card-title">{{ $data['clubFunds']  }}</h4>
                             </div>
                         </div>
                     </div>
@@ -210,7 +210,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Poor Funds</p>
-                                <h4 class="card-title"></h4>
+                                <h4 class="card-title">{{ $data['poorFunds']  }}</h4>
                             </div>
                         </div>
                     </div>
@@ -229,7 +229,7 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Insurance Funds</p>
-                                <h4 class="card-title"></h4>
+                                <h4 class="card-title">{{ $data['insuranceFunds']  }}</h4>
                             </div>
                         </div>
                     </div>

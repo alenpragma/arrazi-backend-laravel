@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\api\auth;
 
-use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use App\Models\User;
 use App\services\UserLogin;
-use App\services\UserRegister;
-use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Models\GeneralSetting;
+use App\services\UserRegister;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -35,6 +36,9 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
+        $generalSettings = GeneralSetting::first();
+        $clubBadge = $generalSettings->club_image ? asset('storage/' . $generalSettings->club_image) : null;
+
         return response()->json([
             'status' => true,
             'user' => $user,
@@ -43,6 +47,7 @@ class AuthController extends Controller
             'binary_earnings' => DB::table('matching_bonus_logs')->where('user_id', $user->id)->sum('amount'),
             'total_match' => DB::table('matching_bonus_logs')->where('user_id', $user->id)->count(),
             'direct_refer' => User::where('refer_by', $user->id)->count(),
+            'club_badge' => $clubBadge,
         ]);
     }
 

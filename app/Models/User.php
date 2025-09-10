@@ -21,6 +21,7 @@ class User extends Authenticatable
         'dealer',
         'password',
         'role',
+        'is_club',
         'is_active',
         'refer_by',
         'position',

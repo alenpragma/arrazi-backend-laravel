@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\StockController;
+use App\Http\Controllers\Admin\FundDistribution;
 use App\Http\Controllers\Admin\DepositController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\WithdrawController;
@@ -83,5 +84,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
 
     // Transfer History
     Route::get('transfer-history', [TransferHistoryController::class, 'index'])->name('admin.transfer-history.index');
+
+        // Fund Distribution
+
+    Route::get('fund-distribution', [FundDistribution::class, 'index'])->name('admin.fund.distribution');
+    Route::post('club-fund/send', [FundDistribution::class, 'distributeClubFund'])->name('admin.club.fund.distribution');
 
 });

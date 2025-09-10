@@ -35,7 +35,7 @@
 								<p>Dashboard</p>
 							</a>
 						</li>
-						<li class="nav-item">
+						<li class="nav-item {{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
 							<a href="{{ route('admin.users.index') }}">
 								<i class="fas fa-users"></i>
 								<p>Users</p>
@@ -72,13 +72,13 @@
 								</ul>
 							</div> --}}
 						</li>
-                        <li class="nav-item">
+                        <li class="nav-item {{ request()->routeIs('admin.dealers.list') ? 'active' : '' }}">
 							<a href="{{route('admin.dealers.list')}}">
 								<i class="fas fa-user-tie"></i>
 								<p>Dealer</p>
 							</a>
 						</li>
-                        <li class="nav-item">
+                        <li class="nav-item {{ request()->routeIs('admin.deposits.pending') ? 'active' : '' }}">
 							<a data-bs-toggle="collapse" href="#deposit">
 								<i class="far fa-money-bill-alt"></i>
 								<p>Deposit <span class="text-danger">🔴({{ $pendingDepositCount ?? 0 }})</span></span></p>
@@ -104,7 +104,7 @@
 								</ul>
 							</div>
 						</li>
-                        <li class="nav-item">
+                        <li class="nav-item {{ request()->routeIs('admin.orders.index') ? 'active' : '' }}">
                             <a data-bs-toggle="collapse" href="#orders">
                                 <i class="fas fa-users"></i>
                                 <p>Orders</p>
@@ -141,7 +141,7 @@
                         </li>
 
 
-                        <li class="nav-item">
+                        <li class="nav-item {{ request()->routeIs('admin.products.index') ? 'active' : '' }}">
 							<a data-bs-toggle="collapse" href="#products">
 								<i class="fas fa-boxes"></i>
 								<p>Products</p>
@@ -163,14 +163,21 @@
 							</div>
 						</li>
 
-                        <li class="nav-item">
+                        <li class="nav-item {{ request()->routeIs('admin.stocks.index') ? 'active' : '' }}">
 							<a href="{{route('admin.stocks.index')}}">
 								<i class="fas fa-tasks"></i>
 								<p>Stock Buyer</p>
 							</a>
 						</li>
 
-                        <li class="nav-item">
+                        <li class="nav-item {{ request()->routeIs('admin.fund.distribution') ? 'active' : '' }}">
+                            <a href="{{ route('admin.fund.distribution') }}">
+                                <i class="fas fa-donate"></i>
+                                <p>Fund Distribution</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item {{ request()->routeIs('admin.withdraws.pending') ? 'active' : '' }}">
 							<a data-bs-toggle="collapse" href="#withdraw">
 								<i class="far fa-money-bill-alt"></i>
 								<p>Withdraw <span class="text-danger">🔴({{ $pendingWithdrawCount?? 0 }})</span></span></p>
@@ -202,13 +209,13 @@
 								<p>Transactions History</p>
 							</a>
 						</li> --}}
-                         <li class="nav-item">
+                         <li class="nav-item {{ request()->routeIs('admin.transfer-history.index') ? 'active' : '' }}">
 							<a href="{{route('admin.transfer-history.index')}}">
 								<i class="fas fa-exchange-alt"></i>
 								<p>Transfer History</p>
 							</a>
 						</li>
-                        <li class="nav-item">
+                        <li class="nav-item {{ request()->routeIs('admin.general.settings') ? 'active' : '' }}">
 							<a data-bs-toggle="collapse" href="#settings">
 								<i class="fas fa-cog"></i>
 								<p>Settings</p>

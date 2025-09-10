@@ -9,15 +9,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $generalSettings->app_name ?? 'Larabel' }}</title>
     <link rel="stylesheet" href="{{ asset('assets/admin/auth/style.css') }}">
-    <link rel="icon" href="{{ Storage::url($generalSettings->favicon) ?? asset('default_favicon.ico') }}">
-    <link rel="apple-touch-icon" href="{{ Storage::url($generalSettings->favicon) ?? asset('default_favicon.ico') }}">
+    <link rel="icon" href="{{ asset('storage/' .$generalSettings->favicon) ?? asset('default_favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('storage/' .$generalSettings->favicon) ?? asset('default_favicon.ico') }}">
 </head>
 
 <body>
     <div class="wrapper">
         <div class="logo">
             @if(isset($generalSettings->logo))
-        <img src="{{ Storage::url($generalSettings->logo) }}" alt="Favicon"">
+        <img src="{{ asset('storage/' . $generalSettings->logo) }}" alt="Main logo" height="40px">
     @endif
         </div>
         <div class="text-center mt-4 name">

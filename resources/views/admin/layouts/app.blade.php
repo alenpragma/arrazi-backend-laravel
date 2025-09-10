@@ -8,8 +8,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>{{ $generalSettings->app_name ?? 'Larabel' }}</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
-	<link rel="icon" href="{{ Storage::url($generalSettings->favicon) ?? asset('default_favicon.ico') }}">
-    <link rel="apple-touch-icon" href="{{ Storage::url($generalSettings->favicon) ?? asset('default_favicon.ico') }}">
+	<link rel="icon" href="{{ asset('storage/' .$generalSettings->favicon) ?? asset('default_favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('storage/' .$generalSettings->favicon) ?? asset('default_favicon.ico') }}">
 
 
 @include('admin.layouts.partials.__style')

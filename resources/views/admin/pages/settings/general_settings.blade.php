@@ -141,7 +141,7 @@
                                     <input type="file" id="favicon" name="favicon" class="form-control">
                                     @if(isset($generalSettings->favicon))
                                         <div class="mt-2">
-                                            <img src="{{ asset('public/storage/' . $generalSettings->favicon) }}"
+                                            <img src="{{ asset('storage/' . $generalSettings->favicon) }}"
                                                  alt="Current Favicon"
                                                  style="max-width: 32px; max-height: 32px;">
                                             <span class="ms-2">Current favicon</span>
@@ -154,7 +154,7 @@
                                     <input type="file" id="logo" name="logo" class="form-control">
                                     @if(isset($generalSettings->logo))
                                         <div class="mt-2">
-                                            <img src="{{ asset('public/storage/' . $generalSettings->logo) }}"
+                                            <img src="{{ asset('storage/' . $generalSettings->logo) }}"
                                                  alt="Current Logo"
                                                  style="max-width: 300px; max-height: 45px;">
                                             <span class="ms-2">Current logo</span>

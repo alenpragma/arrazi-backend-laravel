@@ -6,7 +6,7 @@
 
 					<a href="{{route('admin.dashboard')}}" class="logo">
                         @if($generalSettings->logo)
-                        <img src="{{ asset('storage/' . $generalSettings->logo) }}" alt="{{ $generalSettings->app_name }}" class="navbar-brand" height="20">
+                        <img src="{{ asset('storage/' . $generalSettings->logo) }}" alt="{{ $generalSettings->app_name }}" class="navbar-brand" height="40">
                     @else
                         <h1>{{ $generalSettings->app_name ?? 'App Name' }}</h1>
                     @endif

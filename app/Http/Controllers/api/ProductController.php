@@ -196,22 +196,32 @@ class ProductController extends Controller
             ], 401);
         }
 
+        $perPage = $request->get('per_page', 10);
+
         $history = FundBonusHistory::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function($item){
-                return [
-                    'id' => $item->id,
-                    'fund_name' => $item->fund_name,
-                    'amount' => $item->amount,
-                    'description' => $item->description,
-                    'date' => $item->created_at->format('Y-m-d H:i:s')
-                ];
-            });
+            ->paginate($perPage);
+
+        $data = $history->getCollection()->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'fund_name' => $item->fund_name,
+                'amount' => $item->amount,
+                'description' => $item->description,
+                'date' => $item->created_at->format('Y-m-d H:i:s')
+            ];
+        });
 
         return response()->json([
             'status' => true,
-            'data' => $history,
+            'data' => $data,
+            'pagination' => [
+                'current_page' => $history->currentPage(),
+                'last_page' => $history->lastPage(),
+                'per_page' => $history->perPage(),
+                'total' => $history->total(),
+            ]
         ]);
     }
+
 }

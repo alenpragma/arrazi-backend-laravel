@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Fund;
+use App\Models\User;
 use App\Models\Order;
 use App\Models\ClubSetting;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\GeneralSetting;
-use App\Models\User;
+use App\Models\DealerBonusHistory;
+use App\Http\Controllers\Controller;
 
 class OrderController extends Controller
 {
@@ -40,6 +41,22 @@ class OrderController extends Controller
 
         if ($request->status === 'completed') {
             $order->completeOrder();
+
+            $dealer = $order->dealer;
+            if ($dealer) {
+                $bonusSettings = GeneralSetting::first();
+                $dealerPvValue = $bonusSettings->dealer_pv_value ?? 4;
+                $bonusAmount = $order->pv * $dealerPvValue;
+
+                $dealer->income_wallet += $bonusAmount;
+                $dealer->save();
+                DealerBonusHistory::create([
+                    'dealer_id' => $dealer->id,
+                    'order_id' => $order->id,
+                    'amount' => $bonusAmount,
+                    'description' => 'Dealer bonus added to income_wallet for order #Arrazi-' . $order->id
+                ]);
+            }
         } else {
             $order->status = $request->status;
             $order->save();

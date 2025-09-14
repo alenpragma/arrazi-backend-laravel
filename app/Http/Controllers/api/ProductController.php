@@ -314,6 +314,13 @@ class ProductController extends Controller
 
         $previousStatus = $order->status;
 
+        if ($previousStatus === 'Completed' && $request->status !== 'Completed') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Completed order cannot be changed to another status.'
+            ], 400);
+        }
+
         if ($request->status === 'Completed' && $previousStatus !== 'Completed') {
             $order->completeOrder();
 

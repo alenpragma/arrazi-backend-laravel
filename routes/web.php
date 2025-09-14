@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DepositController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\WithdrawController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DealerController;
 use App\Http\Controllers\Admin\GeneralSettingsController;
 use App\Http\Controllers\Admin\TransferHistoryController;
 
@@ -29,6 +30,9 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
 
 
         // Users
+        Route::get('dealers/create', [DealerController::class, 'create'])->name('admin.dealers.create');
+        Route::post('dealers', [DealerController::class, 'store'])->name('admin.dealers.store');
+        Route::get('dealers/bonus-history', [DealerController::class, 'bonusHistory'])->name('admin.dealers.bonus.history');
         Route::resource('users', UserController::class)->names([
             'index' => 'admin.users.index',
             'show' => 'admin.users.show',
@@ -89,5 +93,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
 
     Route::get('fund-distribution', [FundDistribution::class, 'index'])->name('admin.fund.distribution');
     Route::post('club-fund/send', [FundDistribution::class, 'distributeClubFund'])->name('admin.club.fund.distribution');
+
 
 });

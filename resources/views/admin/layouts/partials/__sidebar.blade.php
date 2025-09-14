@@ -72,12 +72,39 @@
 								</ul>
 							</div> --}}
 						</li>
-                        <li class="nav-item {{ request()->routeIs('admin.dealers.list') ? 'active' : '' }}">
-							<a href="{{route('admin.dealers.list')}}">
-								<i class="fas fa-user-tie"></i>
-								<p>Dealer</p>
-							</a>
-						</li>
+
+                        <li class="nav-item {{ request()->routeIs('admin.dealers.*') ? 'active' : '' }}">
+                            <a data-bs-toggle="collapse" href="#dealers">
+                                <i class="fas fa-user-tie"></i>
+                                <p>Dealers</p>
+                                <span class="caret"></span>
+                            </a>
+                            <div class="collapse" id="dealers">
+                                <ul class="nav nav-collapse">
+                                    <!-- Dealers List -->
+                                    <li>
+                                        <a href="{{ route('admin.dealers.list') }}" class="nav-link {{ request()->routeIs('admin.dealers.index') ? 'active' : '' }}">
+                                            <span class="sub-item">Dealers List</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Add Dealer -->
+                                    <li>
+                                        <a href="{{ route('admin.dealers.create') }}" class="nav-link {{ request()->routeIs('admin.dealers.create') ? 'active' : '' }}">
+                                            <span class="sub-item">Add Dealer</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Dealers Bonus History -->
+                                    <li>
+                                        <a href="{{ route('admin.dealers.bonus.history') }}" class="nav-link {{ request()->routeIs('admin.dealers.bonus.history') ? 'active' : '' }}">
+                                            <span class="sub-item">Dealers Bonus History</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
                         <li class="nav-item {{ request()->routeIs('admin.deposits.pending') ? 'active' : '' }}">
 							<a data-bs-toggle="collapse" href="#deposit">
 								<i class="far fa-money-bill-alt"></i>

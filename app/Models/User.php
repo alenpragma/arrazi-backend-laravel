@@ -32,7 +32,8 @@ class User extends Authenticatable
         'income_wallet',
         'upline_id',
         'left_user_id',
-        'right_user_id'
+        'right_user_id',
+        'dealer_id',
     ];
 
     protected $hidden = [
@@ -45,7 +46,18 @@ class User extends Authenticatable
         parent::boot();
         static::creating(function ($user) {
             $user->refer_code = self::generateReferCode();
+
+            if ($user->role === 'dealer') {
+            $user->dealer_id = self::generateDealerId();
+        }
         });
+
+        static::updating(function ($user) {
+            if ($user->role === 'dealer' && !$user->dealer_id) {
+                $user->dealer_id = self::generateDealerId();
+            }
+        });
+
     }
 
     public static function generateReferCode(): string
@@ -55,6 +67,15 @@ class User extends Authenticatable
         } while (self::where('refer_code', $code)->exists());
 
         return $code;
+    }
+
+    public static function generateDealerId(): string
+    {
+        do {
+            $dealerId = 'DLR-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 4));
+        } while (self::where('dealer_id', $dealerId)->exists());
+
+        return $dealerId;
     }
 
     protected function casts(): array

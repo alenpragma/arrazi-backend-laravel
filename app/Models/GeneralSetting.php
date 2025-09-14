@@ -19,6 +19,7 @@ class GeneralSetting extends Model
         'club_required_pv',
         'club_image',
         'pv_value',
+        'dealer_pv_value',
 
     ];
 

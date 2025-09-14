@@ -38,35 +38,16 @@ class OrderController extends Controller
             'status' => 'required|in:pending,processing,completed,cancelled',
         ]);
 
-        $order->status = $request->status;
-        $order->save();
-
-        if ($order->status === 'completed') {
-            $this->updateFunds($order->pv);
-        }
-
-        if ($order->user->referer) {
-            $this->checkClubEligibility($order->user->referer);
+        if ($request->status === 'completed') {
+            $order->completeOrder();
+        } else {
+            $order->status = $request->status;
+            $order->save();
         }
 
         return redirect()->back()->with('success', 'Order status updated successfully.');
     }
 
-    private function updateFunds($pv)
-    {
-        $settings = GeneralSetting::first();
-        $pvValue = $settings->pv_value;
-        $amount = $pv * $pvValue;
-        
-        Fund::whereIn('name', [
-        'Club Fund',
-        'Insurance Fund',
-        'Poor Fund',
-        'Rank Fund'
-        ])
-        ->where('status', 1)
-        ->increment('amount', $amount);
-    }
 
     private function checkClubEligibility(User $user)
     {

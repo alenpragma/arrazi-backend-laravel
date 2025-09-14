@@ -87,6 +87,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title"><i class="fas fa-coins me-2"></i> PV Settings</h5>
+                                <p class="mb-0">Fund PV settings:</p>
                                 <div class="mb-3 d-flex align-items-center" style="gap: 10px;">
                                     <label for="pv_value" class="form-label mb-0" style="white-space: nowrap;">
                                         1 PV =
@@ -94,6 +95,18 @@
                                     <div class="input-group" style="max-width: 200px;">
                                         <input type="number" step="0.01" id="pv_value" name="pv_value"
                                             value="{{ old('pv_value', $generalSettings->pv_value ?? 2) }}"
+                                            required class="form-control">
+                                        <span class="input-group-text">&#x09F3;</span>
+                                    </div>
+                                </div>
+                                 <p class="mb-0">Dealer PV settings:</p>
+                                 <div class="mb-3 d-flex align-items-center" style="gap: 10px;">
+                                    <label for="dealer_pv_value" class="form-label mb-0" style="white-space: nowrap;">
+                                        1 PV =
+                                    </label>
+                                    <div class="input-group" style="max-width: 200px;">
+                                        <input type="number" step="0.01" id="dealer_pv_value" name="dealer_pv_value"
+                                            value="{{ old('dealer_pv_value', $generalSettings->dealer_pv_value ?? 2) }}"
                                             required class="form-control">
                                         <span class="input-group-text">&#x09F3;</span>
                                     </div>

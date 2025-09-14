@@ -28,6 +28,7 @@ class GeneralSettingsController extends Controller
             'withdraw_charge' => 'required|numeric|min:0|max:100',
             'club_required_pv' => 'required|numeric|min:0',
             'pv_value' => 'required|numeric|min:0',
+            'dealer_pv_value' => 'required|numeric|min:0',
             ]);
 
         $generalSettings = GeneralSetting::first();
@@ -40,6 +41,7 @@ class GeneralSettingsController extends Controller
                 'withdraw_charge' => $request->withdraw_charge,
                 'club_required_pv' => $request->club_required_pv,
                 'pv_value' => $request->pv_value,
+                'dealer_pv_value' => $request->dealer_pv_value,
 
             ]);
         }
@@ -50,7 +52,8 @@ class GeneralSettingsController extends Controller
             'withdraw_shopping_wallet_percentage',
             'withdraw_charge',
             'club_required_pv',
-            'pv_value'
+            'pv_value',
+            'dealer_pv_value'
         ]);
 
         if ($request->hasFile('logo')) {

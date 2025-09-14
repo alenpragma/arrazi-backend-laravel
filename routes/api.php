@@ -22,6 +22,7 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
    Route::get('profile', [AuthController::class, 'profile']);
    Route::post('deposit-request', [DepositController::class, 'depositRequest']);
    //products
+    Route::get('search-dealer', [ProductController::class, 'searchDealer']);
     Route::get('product', [ProductController::class, 'index']);
     Route::get('product/{slug}', [ProductController::class, 'index']);
     Route::post('buy-product', [ProductController::class, 'buyProducts']);
@@ -51,6 +52,17 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('withdraw-history', [WithdrawController::class, 'index']);
 
     Route::get('fund-bonus-history', [ProductController::class,'fundBonusHistory']);
+
+
+
+});
+
+
+Route::prefix('dealer')->middleware('auth:sanctum')->group(function () {
+
+    Route::get('orders', [ProductController::class, 'dealerOrders']);
+    Route::post('orders/status/{id}', [ProductController::class, 'updateOrderStatus']);
+    Route::get('bonus-history', [ProductController::class, 'dealerBonusHistory']);
 
 });
 

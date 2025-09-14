@@ -6,8 +6,10 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\GeneralSetting;
 use App\Models\FundBonusHistory;
 use Illuminate\Http\JsonResponse;
+use App\Models\DealerBonusHistory;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
@@ -57,7 +59,25 @@ class ProductController extends Controller
     }
 
 
+    public function searchDealer(Request $request)
+    {
+        $query = $request->input('query');
 
+        $dealers = User::where('role', 'dealer')
+            ->where(function($q) use ($query) {
+                $q->where('name', 'like', "%$query%")
+                ->orWhere('email', 'like', "%$query%")
+                ->orWhere('dealer_id', 'like', "%$query%");
+            })
+            ->select('id', 'name', 'email', 'dealer_id')
+            ->limit(10)
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'dealers' => $dealers
+        ]);
+    }
 
     public function buyProducts(Request $request)
     {
@@ -65,12 +85,14 @@ class ProductController extends Controller
             $validated = $request->validate([
                 'product_id' => 'required|exists:products,id',
                 'quantity' => 'required|integer|min:1',
+                'dealer_id' => 'required|exists:users,id',
             ]);
 
             $user = $request->user();
             $product = Product::findOrFail($validated['product_id']);
-            $quantity = $validated['quantity'];
+            $dealer = User::where('id', $validated['dealer_id'])->where('role', 'dealer')->firstOrFail();
 
+            $quantity = $validated['quantity'];
             $totalPoints = $product->points * $quantity;
             $totalCost = $product->sale_price * $quantity;
 
@@ -83,9 +105,10 @@ class ProductController extends Controller
 
             DB::beginTransaction();
 
-            // Create order
+
             $order = Order::create([
                 'user_id' => $user->id,
+                'dealer_id' => $dealer->id,
                 'product_id' => $validated['product_id'],
                 'quantity' => $quantity,
                 'pv' => $totalPoints,
@@ -93,16 +116,15 @@ class ProductController extends Controller
                 'status' => 'Pending',
             ]);
 
-            // Update user wallet and points
             $user->shopping_wallet -= $totalCost;
             $user->points += $totalPoints;
-            if($user->is_active == 0){
+
+            if ($user->is_active == 0) {
                 $user->is_active = 1;
-                $user->shopping_wallet += $totalPoints*3;
+                $user->shopping_wallet += $totalPoints * 3;
             }
             $user->save();
 
-            //$this->distributeLeftChainPoints($user, $totalPoints);
             $this->giveReferralBonus($user, $totalPoints);
 
             DB::commit();
@@ -110,6 +132,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Product purchased successfully.',
+                'order' => $order
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -121,9 +144,6 @@ class ProductController extends Controller
         }
     }
 
-
-
-
     public function orderHistory(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -133,7 +153,7 @@ class ProductController extends Controller
         $totalPoints = Order::where('user_id', $user->id)->sum('pv');
         $totalCost = Order::where('user_id',$user->id)->sum('amount');
 
-           // Calculate total team PV
+
         $directReferralIds = User::where('refer_by', $user->id)->pluck('id');
         $directReferralPV = Order::whereIn('user_id', $directReferralIds)->sum('pv');
 
@@ -221,6 +241,125 @@ class ProductController extends Controller
                 'per_page' => $history->perPage(),
                 'total' => $history->total(),
             ]
+        ]);
+    }
+
+        // dealers
+    public function dealerOrders(Request $request)
+    {
+        $dealer = $request->user();
+
+        if ($dealer->role !== 'dealer') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized. Only dealers can access this route.'
+            ], 403);
+        }
+
+        $orders = Order::where('dealer_id', $dealer->id)
+            ->with(['product:id,title,slug,images,sale_price,points', 'user:id,name,email'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $data = $orders->getCollection()->map(function ($order) {
+            return [
+                'id' => $order->id,
+                'product' => [
+                    'id' => $order->product->id,
+                    'title' => $order->product->title,
+                    'slug' => $order->product->slug,
+                    'images' => $order->product->images ? url('storage/' . $order->product->images) : null,
+                    'sale_price' => $order->product->sale_price,
+                    'points' => $order->product->points,
+                ],
+                'user' => [
+                    'id' => $order->user->id,
+                    'name' => $order->user->name,
+                    'email' => $order->user->email,
+                ],
+                'quantity' => $order->quantity,
+                'amount' => $order->amount,
+                'pv' => $order->pv,
+                'status' => $order->status,
+                'created_at' => $order->created_at->format('Y-m-d H:i:s')
+            ];
+        });
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Dealer orders retrieved successfully.',
+            'orders' => $data,
+            'pagination' => [
+                'current_page' => $orders->currentPage(),
+                'last_page' => $orders->lastPage(),
+                'per_page' => $orders->perPage(),
+                'total' => $orders->total(),
+            ]
+        ]);
+    }
+
+    public function updateOrderStatus(Request $request, $id)
+    {
+        $dealer = $request->user();
+
+        if ($dealer->role !== 'dealer') {
+            return response()->json(['status' => false, 'message' => 'Unauthorized.'], 403);
+        }
+
+        $request->validate([
+            'status' => 'required|in:Pending,Processing,Completed'
+        ]);
+
+        $order = Order::where('id', $id)->where('dealer_id', $dealer->id)->firstOrFail();
+
+        $previousStatus = $order->status;
+
+        if ($request->status === 'Completed' && $previousStatus !== 'Completed') {
+            $order->completeOrder();
+
+            $bonusSettings = GeneralSetting::first();
+            $dealerPvValue = $bonusSettings->dealer_pv_value;
+            $bonusAmount = $order->pv * $dealerPvValue;
+            $dealer->income_wallet += $bonusAmount;
+            $dealer->save();
+
+            DealerBonusHistory::create([
+                'dealer_id' => $dealer->id,
+                'order_id' => $order->id,
+                'amount' => $bonusAmount,
+                'description' => 'Dealer bonus added to income_wallet for order #Arrazi-' . $order->id
+            ]);
+        } else {
+            $order->status = $request->status;
+            $order->save();
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Order status updated successfully.',
+            'order' => $order
+        ]);
+    }
+
+    public function dealerBonusHistory(Request $request)
+    {
+        $dealer = $request->user();
+
+        if ($dealer->role !== 'dealer') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized. Only dealers can view bonus history.'
+            ], 403);
+        }
+
+        $history = DealerBonusHistory::where('dealer_id', $dealer->id)
+                    ->with('order:id,status')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $history
         ]);
     }
 

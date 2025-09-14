@@ -17,7 +17,7 @@
                 <div class="col-md-6"><strong>Referred By:</strong> {{ $user->referer->name ?? '-' }}</div>
             </div>
             <div class="row mb-3">
-                <div class="col-md-6"><strong>Dealer:</strong> {{ $user->dealer }}</div>
+                <div class="col-md-6"><strong>Dealer ID:</strong> {{ $user->dealer_id }}</div>
                 <div class="col-md-6"><strong>Role:</strong> <span class="badge bg-secondary">{{ ucfirst($user->role) }}</span></div>
             </div>
             <div class="row mb-3">
@@ -37,6 +37,8 @@
                 <div class="col-md-4"><strong>Left Points:</strong> {{ $user->left_points }}</div>
                 <div class="col-md-4"><strong>Right Points:</strong> {{ $user->right_points }}</div>
                 <div class="col-md-4"><strong>Total Left Points:</strong> {{ $totalLeftPoints }}</div>
+            </div>
+            <div class="row mb-3">
                 <div class="col-md-4"><strong>Total Right Points:</strong> {{ $totalRightPoints }}</div>
             </div>
 

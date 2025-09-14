@@ -38,7 +38,7 @@ class DashboardController extends Controller
         $totalStocks = Stocks::count();
         $totalClubUsers = User::where('is_club', 1)->count();
 
-        $newUsers = User::where('role', '!=', 'admin')->latest()->take(5)->get();
+        $newUsers = User::where('role', '!=', 'admin')->latest()->take(12)->get();
 
         $deposits = Deposit::where('status', 'approved')->latest()->take(10)->get()->map(function ($item) {
             return [

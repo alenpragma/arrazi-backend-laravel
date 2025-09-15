@@ -314,14 +314,14 @@ class ProductController extends Controller
 
         $previousStatus = $order->status;
 
-        if ($previousStatus === 'Completed' && $request->status !== 'Completed') {
+        if ($previousStatus === 'completed' && $request->status !== 'completed') {
             return response()->json([
                 'status' => false,
                 'message' => 'Completed order cannot be changed to another status.'
-            ], 400);
+            ], 402);
         }
 
-        if ($request->status === 'Completed' && $previousStatus !== 'Completed') {
+        if ($request->status === 'completed' && $previousStatus !== 'completed') {
             $order->completeOrder();
 
             $bonusSettings = GeneralSetting::first();

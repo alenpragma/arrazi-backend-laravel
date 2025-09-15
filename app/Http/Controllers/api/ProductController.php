@@ -359,10 +359,12 @@ class ProductController extends Controller
             ], 403);
         }
 
+        $perPage = $request->get('per_page', 10);
+
         $history = DealerBonusHistory::where('dealer_id', $dealer->id)
                     ->with('order:id,status')
                     ->orderBy('created_at', 'desc')
-                    ->get();
+                    ->paginate($perPage);
 
         return response()->json([
             'status' => true,
